@@ -14,19 +14,19 @@ var campgroundSchema = new mongoose.Schema({
 
 var Campground = mongoose.model("Campground", campgroundSchema);
 
-Campground.create(
-    { name: "apple", image: "https://image.shutterstock.com/image-photo/red-apple-on-white-background-450w-158989157.jpg" },
-    { name: "banana", image: "https://www.istockphoto.com/in/photo/banana-bunch-gm173242750-7671231" },
-    { name: "orange", image: "https://media.istockphoto.com/photos/orange-with-leaf-on-white-background-with-clipping-path-picture-id517988386?s=170x170" },
-    function(err, campground){
-        if(err){
-            console.log(err);
-        } else{
-            console.log("Newly created campground");
-            console.log(campground);
-        }
-    }
-    );
+// Campground.create(
+//     { name: "apple", image: "https://image.shutterstock.com/image-photo/red-apple-on-white-background-450w-158989157.jpg" },
+//     { name: "banana", image: "https://www.istockphoto.com/in/photo/banana-bunch-gm173242750-7671231" },
+//     { name: "orange", image: "https://media.istockphoto.com/photos/orange-with-leaf-on-white-background-with-clipping-path-picture-id517988386?s=170x170" },
+//     function(err, campground){
+//         if(err){
+//             console.log(err);
+//         } else{
+//             console.log("Newly created campground");
+//             console.log(campground);
+//         }
+//     }
+//     );
 
 
 
@@ -43,8 +43,14 @@ app.get("/", function (req, res) {
 
 app.get("/campGrounds", function(req, res){
     
-    res.render("campGrounds",{campgrounds:campgrounds});
-
+    // res.render("campGrounds",{campgrounds:campgrounds});
+    Campground.find({},function(err,AllCampgrounds){
+        if(err){
+            console.log(err);
+        } else{
+            res.render("campGrounds", {campgrounds:AllCampgrounds});
+        }
+    });
 });
 
 app.get("/campGrounds/new", function (req, res) {
@@ -56,8 +62,15 @@ app.post("/campGrounds", function (req,res) {
     var name = req.body.name;
     var image = req.body.image;
     var newCamp = {name:name, image:image};
-    campgrounds.push(newCamp);
-    res.redirect("/campGrounds");
+    Campground.create(newCamp, function(err, newlyCreated){
+        if(err){
+            console.log(err);
+        } else{
+            res.redirect("/campGrounds");        
+        }
+    })
+    // campgrounds.push(newCamp);
+    
 });
 
 
